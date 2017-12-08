@@ -1,0 +1,10 @@
+[package]
+name = "vor"
+version = "0.0.0"
+authors = ["Phil J. Laszkowicz <phil@fillip.pro>"]
+
+[dependencies]
+
+[dependencies.vor-narrator]
+path = "src/narrator"
+version = "0.0.0"

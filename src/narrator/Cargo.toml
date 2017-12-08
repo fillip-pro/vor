@@ -1,0 +1,11 @@
+[package]
+name = "vor-narrator"
+version = "0.0.0"
+authors = ["Phil J. Laszkowicz <phil@fillip.pro>"]
+
+[lib]
+name = "narrator"
+path = "src/lib.rs"
+
+[dependencies]
+
