@@ -56,7 +56,7 @@ test-app:
   stage: test
   script:
     - echo "Testing service"
-    - make build-dev
+    - make build
     - make test
     - mkdir -p artifacts
     - mv target/x86_64-unknown-linux-musl/debug/calabazilla ./artifacts/
