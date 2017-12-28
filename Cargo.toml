@@ -10,6 +10,10 @@ include = [
 ]
 
 [[bin]]
+name = "vor"
+path = "src/main.rs"
+
+[[bin]]
 name = "vor-daemon"
 path = "src/daemon/main.rs"
 
