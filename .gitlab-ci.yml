@@ -1,25 +1,10 @@
 variables:
-  DOCKER_DRIVER: overlay
-  CONTAINER_TEST_IMAGE: $CI_REGISTRY_IMAGE:$CI_BUILD_REF_NAME
-  CONTAINER_IMAGE: $CI_REGISTRY_IMAGE
-  CONTAINER_RELEASE_IMAGE: $CI_REGISTRY_IMAGE:latest
-
-cache:
-  key: "$CI_PROJECT_NAME"
-  untracked: false
-  policy: push
-  #paths:
-   # - .build/
 
 stages:
   - build
   - test
-  - release
-  #- deploy
 
-before_script:
-
-build-app:
+build:
   image: omnijarstudio/rust:linux-musl
   stage: build
   script:
@@ -27,6 +12,7 @@ build-app:
     - make build
     - mkdir -p artifacts
     - mv target/x86_64-unknown-linux-musl/release/vor ./artifacts/
+    - mv target/x86_64-unknown-linux-musl/release/vor-daemon ./artifacts/
     - make clean
   artifacts:
     paths:
@@ -37,8 +23,12 @@ build-app:
   when: manual
   only:
     - release
+  artifacts:
+    paths:
+      - ./artifacts
+    expire_in: 1 week
 
-review-app:
+review:
   image: omnijarstudio/rust:linux-musl
   stage: test
   script:
@@ -51,7 +41,7 @@ review-app:
   except:
     - master
 
-test-app:
+test:
   image: omnijarstudio/rust:linux-musl
   stage: test
   script:
@@ -60,28 +50,11 @@ test-app:
     - make test
     - mkdir -p artifacts
     - mv target/x86_64-unknown-linux-musl/debug/vor ./artifacts/
+    - mv target/x86_64-unknown-linux-musl/debug/vor-daemon ./artifacts/
     - make clean
   tags:
     - docker
   only:
     - master
-  artifacts:
-    paths:
-    - ./artifacts
-
-release-image:
-  image: docker:scratch
-  stage: release
-  services:
-    - docker:dind
-  before_script:
-    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
-  script:
-    - docker build --pull -t $CONTAINER_TEST_IMAGE -f Dockerfile .
-    - docker tag $CONTAINER_TEST_IMAGE $CONTAINER_IMAGE:latest
-    - docker push $CONTAINER_IMAGE:latest
-  when: manual
-  tags:
-    - docker
-  only:
-    - release
+  dependencies:
+    - build
