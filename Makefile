@@ -17,3 +17,5 @@ test:
 
 clean:
 	rm -rf target/
+
+.PHONY: all clean build run test
